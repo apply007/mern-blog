@@ -22,10 +22,20 @@ mongoose.connect(process.env.DBCON)
 //
 app.listen(process.env.PORT,(req,res)=>{
 console.log("Server is ready and running at port 3000!!!")
-
-
-app.use("/api/user",userRoute)
-app.use("/api/auth",authRoute)
 })
 
+//route
+app.use("/api/user",userRoute)
+app.use("/api/auth",authRoute)
 
+//MiddleWare
+app.use((err,req,res,next)=>{
+    const statusCode=err.statusCode||500
+    const message=err.message||"internal server error"
+    res.status(statusCode).json({
+        success:false,
+        statusCode,
+        message
+    })
+
+})
