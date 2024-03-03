@@ -7,6 +7,7 @@ import {
   signInSuccess,
 } from "../redux/user/userSlice";
 import { useDispatch,useSelector } from "react-redux";
+import OAuth from "../components/OAuth";
 
 
 
@@ -126,6 +127,8 @@ const {loading,error:errorMessage}=useSelector(state=>state.user)
                 "Sign In"
               )}
             </Button>
+
+            <OAuth></OAuth>
           </form>
           <div className="flex items-center justify-between p-1">
             <span>Have an account</span>

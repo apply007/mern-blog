@@ -2,13 +2,14 @@ import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signInStart,signInFailure,signInSuccess } from "../redux/user/userSlice";
-import {  useDispatch } from "react-redux";
+import {  useDispatch, useSelector } from "react-redux";
+import OAuth from "../components/OAuth";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
   // const [loading, setLoading] = useState(false);
   // const [errorMessage, setError] = useState(null);
-
+const {loading,error:errorMessage}=useSelector((state)=>state.user)
   const dispatch=useDispatch()
 
   const handleChange = (e) => {
@@ -118,6 +119,7 @@ export default function SignUp() {
                 "Sign Up"
               )}
             </Button>
+<OAuth></OAuth>
           </form>
           <div className="flex items-center justify-between p-1">
             <span>Have an account</span>

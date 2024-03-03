@@ -36,23 +36,68 @@ export const signin = async (req, res, next) => {
   try {
     const { email, password } = await req.body;
     if (!email || !password || email === "" || password === "") {
-      next(handleError(400, "All fields are required"));
+    return  next(handleError(400, "All fields are required"));
     }
     const user = await UserModel.findOne({ email });
-    if (user === null) {
-     return next(handleError(404, "User Not Found"));
+    if (!user) {
+    return   next(handleError(404, "User Not Found"));
     }
 
     const validPassword = bcryptjs.compareSync(password, user.password);
     if (!validPassword) {
-     return next(handleError(400, "Wrong credential"));
+      return next(handleError(400, "Wrong credential"));
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-    const {password: pass, ...rest}=user._doc
-    res.status(200).cookie("access_token", token,{httpOnly:true}).json(rest);
-  
+    const { password: pass, ...rest } = user._doc;
+    res
+      .status(200)
+      .cookie("access_token", token, { httpOnly: true })
+      .json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
 
-  
+export const google = async (req, res, next) => {
+  const { email, name, googlePhotoUrl } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ email });
+
+    if (user) {
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      const { password, ...rest } = user._doc;
+      res
+        .status(200)
+        .cookie("access_token", token, {
+          httpOnly: true,
+        })
+        .json(rest);
+    } else {
+      const generatePassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+      const hashPassword = bcryptjs.hashSync(generatePassword, 10);
+
+      const newUser = new UserModel({
+        username: name.toLowerCase().split(" ").join("") +
+          Math.random().toString(9).slice(-4),
+        email,
+        password: hashPassword,
+        profilePicture: googlePhotoUrl,
+      });
+
+      await newUser.save();
+      const token = jwt.sign(
+        {
+          id: newUser._id,
+        },
+        process.env.JWT_SECRET
+      );
+
+const {password, ...rest }=newUser._doc
+      res.status(200).cookie('access_token',token).json(rest)
+    }
   } catch (error) {
     next(error);
   }
