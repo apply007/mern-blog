@@ -1,10 +1,10 @@
-import express from 'express'
-import  userController  from '../controllers/user.controller.js'
+import express from "express";
+import {userController,  updateUser } from "../controllers/user.controller.js";
+import { verifyToken } from "../utils/verifyUser.js";
 
+const router = express.Router();
 
-const router=express.Router()
+router.get("/test", userController);
+router.put("/update/:userId", verifyToken, updateUser);
 
-router.get("/test",userController)
-
-
-export default router
+export default router;
