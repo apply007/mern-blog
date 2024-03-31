@@ -13,7 +13,7 @@ export const verifyToken = (req, res, next) => {
     if (err) {
       next(handleErrors(401, "unauthorized"));
     }
-    req.user1 = user;
+    req.user = user;
     next();
   });
 };
